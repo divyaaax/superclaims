@@ -1,0 +1,349 @@
+{
+  "claim_id": "CLM-2024-789456",
+  "status": "SUCCESS",
+  "processing_time_seconds": 0.01,
+  "segregation_results": {
+    "total_pages": 18,
+    "categories": {
+      "claim_forms": [
+        1
+      ],
+      "cheque_or_bank_details": [
+        2
+      ],
+      "identity_document": [
+        3
+      ],
+      "itemized_bill": [
+        9
+      ],
+      "discharge_summary": [
+        4
+      ],
+      "prescription": [
+        5,
+        7,
+        15
+      ],
+      "investigation_report": [
+        6,
+        11,
+        12,
+        17,
+        18
+      ],
+      "cash_receipt": [],
+      "other": [
+        8,
+        10,
+        13,
+        14,
+        16
+      ]
+    },
+    "page_classifications": [
+      {
+        "page_number": 1,
+        "document_type": "claim_forms",
+        "confidence": 0.95,
+        "reasoning": "Identified document type 'claim_forms' based on header and keywords."
+      },
+      {
+        "page_number": 2,
+        "document_type": "cheque_or_bank_details",
+        "confidence": 0.95,
+        "reasoning": "Identified document type 'cheque_or_bank_details' based on header and keywords."
+      },
+      {
+        "page_number": 3,
+        "document_type": "identity_document",
+        "confidence": 0.95,
+        "reasoning": "Identified document type 'identity_document' based on header and keywords."
+      },
+      {
+        "page_number": 4,
+        "document_type": "discharge_summary",
+        "confidence": 0.95,
+        "reasoning": "Identified document type 'discharge_summary' based on header and keywords."
+      },
+      {
+        "page_number": 5,
+        "document_type": "prescription",
+        "confidence": 0.95,
+        "reasoning": "Identified document type 'prescription' based on header and keywords."
+      },
+      {
+        "page_number": 6,
+        "document_type": "investigation_report",
+        "confidence": 0.95,
+        "reasoning": "Identified document type 'investigation_report' based on header and keywords."
+      },
+      {
+        "page_number": 7,
+        "document_type": "prescription",
+        "confidence": 0.95,
+        "reasoning": "Identified document type 'prescription' based on header and keywords."
+      },
+      {
+        "page_number": 8,
+        "document_type": "other",
+        "confidence": 0.95,
+        "reasoning": "Identified document type 'other' based on header and keywords."
+      },
+      {
+        "page_number": 9,
+        "document_type": "itemized_bill",
+        "confidence": 0.95,
+        "reasoning": "Identified document type 'itemized_bill' based on header and keywords."
+      },
+      {
+        "page_number": 10,
+        "document_type": "other",
+        "confidence": 0.95,
+        "reasoning": "Identified document type 'other' based on header and keywords."
+      },
+      {
+        "page_number": 11,
+        "document_type": "investigation_report",
+        "confidence": 0.95,
+        "reasoning": "Identified document type 'investigation_report' based on header and keywords."
+      },
+      {
+        "page_number": 12,
+        "document_type": "investigation_report",
+        "confidence": 0.95,
+        "reasoning": "Identified document type 'investigation_report' based on header and keywords."
+      },
+      {
+        "page_number": 13,
+        "document_type": "other",
+        "confidence": 0.95,
+        "reasoning": "Identified document type 'other' based on header and keywords."
+      },
+      {
+        "page_number": 14,
+        "document_type": "other",
+        "confidence": 0.95,
+        "reasoning": "Identified document type 'other' based on header and keywords."
+      },
+      {
+        "page_number": 15,
+        "document_type": "prescription",
+        "confidence": 0.95,
+        "reasoning": "Identified document type 'prescription' based on header and keywords."
+      },
+      {
+        "page_number": 16,
+        "document_type": "other",
+        "confidence": 0.95,
+        "reasoning": "Identified document type 'other' based on header and keywords."
+      },
+      {
+        "page_number": 17,
+        "document_type": "investigation_report",
+        "confidence": 0.95,
+        "reasoning": "Identified document type 'investigation_report' based on header and keywords."
+      },
+      {
+        "page_number": 18,
+        "document_type": "investigation_report",
+        "confidence": 0.95,
+        "reasoning": "Identified document type 'investigation_report' based on header and keywords."
+      }
+    ]
+  },
+  "extracted_data": {
+    "identity_information": {
+      "patient_name": "JOHN MICHAEL SMITH",
+      "date_of_birth": "15-MAR-1985",
+      "id_numbers": {
+        "id_number": "ID-987-654-321",
+        "id_type": "Government ID Card"
+      },
+      "policy_details": null,
+      "gender": "Male",
+      "address": "456 Oak Street, Apt 12B, Springfield, IL 62701",
+      "source_pages": [
+        3
+      ],
+      "extracted": true
+    },
+    "discharge_summary": {
+      "diagnosis": "Community Acquired Pneumonia (CAP)",
+      "admission_date": "January 20, 2025",
+      "discharge_date": "January 25, 2025",
+      "physician_details": {
+        "name": "Dr. Sarah Johnson, MD",
+        "title": "Attending Physician"
+      },
+      "hospital_name": "City Medical Center",
+      "discharge_condition": "Stable, improved",
+      "discharge_medications": [
+        "Amoxicillin 500mg TID x 7 days",
+        "Acetaminophen 500mg PRN for pain"
+      ],
+      "source_pages": [
+        4
+      ],
+      "extracted": true
+    },
+    "itemized_bill": {
+      "bill_number": "BILL-2025-789456",
+      "bill_date": "February 1, 2025",
+      "bill_items": [
+        {
+          "item_description": "Room Charges - Semi-Private (5 days)",
+          "quantity": "5",
+          "unit_price": "200.00",
+          "amount": "1000.00",
+          "service_date": "01/20/25"
+        },
+        {
+          "item_description": "Admission Fee",
+          "quantity": "1",
+          "unit_price": "150.00",
+          "amount": "150.00",
+          "service_date": "01/20/25"
+        },
+        {
+          "item_description": "Emergency Room Services",
+          "quantity": "1",
+          "unit_price": "500.00",
+          "amount": "500.00",
+          "service_date": "01/20/25"
+        },
+        {
+          "item_description": "Physician Consultation - Dr. Sarah Johnson",
+          "quantity": "5",
+          "unit_price": "150.00",
+          "amount": "750.00",
+          "service_date": "01/20/25"
+        },
+        {
+          "item_description": "Chest X-Ray",
+          "quantity": "2",
+          "unit_price": "120.00",
+          "amount": "240.00",
+          "service_date": "01/20/25"
+        },
+        {
+          "item_description": "CT Scan - Chest",
+          "quantity": "1",
+          "unit_price": "800.00",
+          "amount": "800.00",
+          "service_date": "01/21/25"
+        },
+        {
+          "item_description": "Complete Blood Count (CBC)",
+          "quantity": "3",
+          "unit_price": "45.00",
+          "amount": "135.00",
+          "service_date": "01/20/25"
+        },
+        {
+          "item_description": "Blood Culture Test",
+          "quantity": "2",
+          "unit_price": "80.00",
+          "amount": "160.00",
+          "service_date": "01/21/25"
+        },
+        {
+          "item_description": "Arterial Blood Gas Analysis",
+          "quantity": "1",
+          "unit_price": "95.00",
+          "amount": "95.00",
+          "service_date": "01/22/25"
+        },
+        {
+          "item_description": "IV Fluids - Normal Saline",
+          "quantity": "10",
+          "unit_price": "25.00",
+          "amount": "250.00",
+          "service_date": "01/20/25"
+        },
+        {
+          "item_description": "Injection - Ceftriaxone 1g",
+          "quantity": "5",
+          "unit_price": "30.00",
+          "amount": "150.00",
+          "service_date": "01/20/25"
+        },
+        {
+          "item_description": "Injection - Paracetamol",
+          "quantity": "6",
+          "unit_price": "8.00",
+          "amount": "48.00",
+          "service_date": "01/21/25"
+        },
+        {
+          "item_description": "Nebulization Treatment",
+          "quantity": "4",
+          "unit_price": "35.00",
+          "amount": "140.00",
+          "service_date": "01/22/25"
+        },
+        {
+          "item_description": "Oxygen Therapy (per hour)",
+          "quantity": "48",
+          "unit_price": "5.00",
+          "amount": "240.00",
+          "service_date": "01/20/25"
+        },
+        {
+          "item_description": "Nursing Care (per day)",
+          "quantity": "5",
+          "unit_price": "100.00",
+          "amount": "500.00",
+          "service_date": "01/20/25"
+        },
+        {
+          "item_description": "ICU Monitoring Equipment",
+          "quantity": "2",
+          "unit_price": "200.00",
+          "amount": "400.00",
+          "service_date": "01/20/25"
+        },
+        {
+          "item_description": "Physiotherapy Session",
+          "quantity": "3",
+          "unit_price": "60.00",
+          "amount": "180.00",
+          "service_date": "01/23/25"
+        },
+        {
+          "item_description": "Medical Supplies & Consumables",
+          "quantity": "1",
+          "unit_price": "250.00",
+          "amount": "250.00",
+          "service_date": "01/20/25"
+        },
+        {
+          "item_description": "Laboratory Processing Fee",
+          "quantity": "1",
+          "unit_price": "75.00",
+          "amount": "75.00",
+          "service_date": "01/20/25"
+        },
+        {
+          "item_description": "Pharmacy Dispensing Fee",
+          "quantity": "1",
+          "unit_price": "50.00",
+          "amount": "50.00",
+          "service_date": "01/20/25"
+        }
+      ],
+      "stated_subtotal": "6113.00",
+      "stated_tax": "305.65",
+      "stated_total": "6418.65",
+      "calculated_subtotal": "6113.00",
+      "calculated_total": "6418.65",
+      "discrepancy_detected": false,
+      "discrepancy_details": null,
+      "source_pages": [
+        9
+      ],
+      "extracted": true
+    }
+  },
+  "errors": []
+}

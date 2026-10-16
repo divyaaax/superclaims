@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SuperClaims — Medical Claim Document Processing &amp; Segregation</title>
+  <meta name="description" content="Enterprise healthcare platform for automated medical insurance claim document segregation, multi-agent entity extraction, and financial reconciliation.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/style.css">
+  <script>
+    (function() {
+      try {
+        const savedTheme = localStorage.getItem('superclaims_theme');
+        const systemDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const theme = savedTheme ? savedTheme : (systemDark ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', theme);
+      } catch (e) {
+        document.documentElement.setAttribute('data-theme', 'light');
+      }
+    })();
+  </script>
+</head>
+<body>
+  <!-- Top Navigation Bar -->
+  <header class="navbar">
+    <div class="nav-container">
+      <a href="/" class="brand">
+        <div class="brand-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="16" y1="13" x2="8" y2="13"></line>
+            <line x1="16" y1="17" x2="8" y2="17"></line>
+            <polyline points="10 9 9 9 8 9"></polyline>
+          </svg>
+        </div>
+        <div class="brand-info">
+          <div class="brand-name">
+            SuperClaims
+            <span class="brand-badge">Healthcare Intake</span>
+          </div>
+          <div class="brand-subtitle">Document Segregation &amp; Multi-Agent Extraction</div>
+        </div>
+      </a>
+
+      <div class="nav-actions">
+        <div class="status-pill" title="FastAPI LangGraph Pipeline Engine Status">
+          <span class="status-dot"></span>
+          <span id="system-status-text">Engine Online</span>
+        </div>
+
+        <button type="button" class="theme-toggle-btn" id="theme-toggle-btn" aria-label="Toggle Light and Dark Mode" title="Toggle Theme (Light / Dark)">
+          <span class="theme-toggle-icon-wrap">
+            <svg class="theme-icon sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="5"></circle>
+              <line x1="12" y1="1" x2="12" y2="3"></line>
+              <line x1="12" y1="21" x2="12" y2="23"></line>
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+              <line x1="1" y1="12" x2="3" y2="12"></line>
+              <line x1="21" y1="12" x2="23" y2="12"></line>
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+            </svg>
+            <svg class="theme-icon moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+            </svg>
+          </span>
+          <span class="theme-toggle-label" id="theme-toggle-label">Dark</span>
+        </button>
+
+        <a href="/docs" target="_blank" rel="noopener noreferrer" class="docs-link">
+          API Reference
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+            <polyline points="15 3 21 3 21 9"></polyline>
+            <line x1="10" y1="14" x2="21" y2="3"></line>
+          </svg>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="main-wrapper">
+    <!-- Orchestration Workflow Strip -->
+    <section class="workflow-strip" id="workflow-strip">
+      <div class="workflow-step active" id="step-1">
+        <div class="step-icon-box">
+          <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+        </div>
+        <div class="step-text">
+          <span class="step-number">Step 1</span>
+          <span class="step-name">Document Intake</span>
+        </div>
+      </div>
+      <span class="workflow-arrow">→</span>
+
+      <div class="workflow-step" id="step-2">
+        <div class="step-icon-box">
+          <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+        </div>
+        <div class="step-text">
+          <span class="step-number">Step 2</span>
+          <span class="step-name">9-Category AI Segregation</span>
+        </div>
+      </div>
+      <span class="workflow-arrow">→</span>
+
+      <div class="workflow-step" id="step-3">
+        <div class="step-icon-box">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 14 14"></polyline></svg>
+        </div>
+        <div class="step-text">
+          <span class="step-number">Step 3</span>
+          <span class="step-name">Parallel Agent Extraction</span>
+        </div>
+      </div>
+      <span class="workflow-arrow">→</span>
+
+      <div class="workflow-step" id="step-4">
+        <div class="step-icon-box">
+          <svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+        </div>
+        <div class="step-text">
+          <span class="step-number">Step 4</span>
+          <span class="step-name">Decimal Math Reconciliation</span>
+        </div>
+      </div>
+      <span class="workflow-arrow">→</span>
+
+      <div class="workflow-step" id="step-5">
+        <div class="step-icon-box">
+          <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+        </div>
+        <div class="step-text">
+          <span class="step-number">Step 5</span>
+          <span class="step-name">Aggregated Output</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Intake & Specifications Grid -->
+    <section class="intake-grid">
+      <!-- Left Column: Form & Upload -->
+      <div class="card">
+        <div class="card-header-clean">
+          <h2 class="card-title">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+            </svg>
+            Medical Claim Document Segregation
+          </h2>
+          <p class="card-subtitle">
+            Upload a multi-page medical claim package. The pipeline extracts pages, classifies them into strictly 9 document categories, routes to specialized agents, and verifies financial totals with Decimal precision.
+          </p>
+        </div>
+
+        <form id="claim-form">
+          <div class="form-group">
+            <label class="form-label" for="claim-id-input">Claim Reference Identifier</label>
+            <div class="input-with-action">
+              <input type="text" id="claim-id-input" class="form-input" placeholder="e.g. CLM-2024-789456" value="CLM-2024-789456" autocomplete="off" required>
+              <button type="button" class="btn btn-secondary btn-sm" id="btn-random-id" title="Generate New Unique Claim ID">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="23 4 23 10 17 10"></polyline>
+                  <polyline points="1 20 1 14 7 14"></polyline>
+                  <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+                </svg>
+                Generate ID
+              </button>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Claim PDF Document</label>
+            <div class="dropzone-box" id="pdf-dropzone">
+              <input type="file" id="pdf-file-input" accept="application/pdf,.pdf" hidden>
+
+              <div class="dropzone-content" id="dropzone-prompt">
+                <div class="dropzone-icon">
+                  <svg viewBox="0 0 24 24">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="17 8 12 3 7 8"></polyline>
+                    <line x1="12" y1="3" x2="12" y2="15"></line>
+                  </svg>
+                </div>
+                <div class="dropzone-title">
+                  Drag and drop your claim PDF here, or <span class="dropzone-browse">browse files</span>
+                </div>
+                <div class="dropzone-desc">Accepts multi-page medical claim PDF packages up to 25 MB</div>
+              </div>
+
+              <!-- Selected File Card -->
+              <div class="file-card hidden" id="file-preview">
+                <div class="file-card-left">
+                  <span class="pdf-tag">PDF</span>
+                  <div>
+                    <div class="file-name-text" id="preview-filename">sample_medical_claim.pdf</div>
+                    <div class="file-size-text" id="preview-filesize">119 KB</div>
+                  </div>
+                </div>
+                <button type="button" class="btn-remove-icon" id="btn-remove-file" title="Remove Document" aria-label="Remove File">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="button-row">
+            <button type="submit" class="btn btn-primary" id="btn-process-claim">
+              <span class="btn-text" id="btn-process-text">Segregate PDF</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+                <polyline points="12 5 19 12 12 19"></polyline>
+              </svg>
+              <span class="spinner hidden" id="btn-spinner"></span>
+            </button>
+
+            <button type="button" class="btn btn-accent" id="btn-load-sample">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+              </svg>
+              Load Sample Claim (18 Pages)
+            </button>
+          </div>
+        </form>
+
+        <!-- Progress Box -->
+        <div class="progress-card hidden" id="progress-box">
+          <div class="progress-header">
+            <span class="progress-step-text" id="progress-step-text">Processing Document...</span>
+            <span class="progress-timer" id="progress-time">0.0s</span>
+          </div>
+          <div class="progress-track">
+            <div class="progress-fill" id="progress-fill" style="width: 15%;"></div>
+          </div>
+        </div>
+
+        <!-- Error Notification -->
+        <div class="alert-box alert-error hidden" id="error-alert">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="12"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+          </svg>
+          <span id="error-message">Error processing claim</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Results Section (Populated when processing completes) -->
+    <section class="results-wrapper hidden" id="results-section">
+      <!-- Executive KPI Cards Row -->
+      <div class="kpi-row">
+        <div class="kpi-card">
+          <div class="kpi-caption">Claim Identifier</div>
+          <div class="kpi-value" id="kpi-claim-id">CLM-2024-789456</div>
+          <div class="kpi-sub">Automated Processing</div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-caption">Pages Segregated</div>
+          <div class="kpi-value" id="kpi-pages">18</div>
+          <div class="kpi-sub">Across 9 Categories</div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-caption">Pipeline Latency</div>
+          <div class="kpi-value" id="kpi-latency">0.04s</div>
+          <div class="kpi-sub">Parallel Node Orchestration</div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-caption">Stated Hospital Total</div>
+          <div class="kpi-value" id="kpi-bill-total">$6,418.65</div>
+          <div class="kpi-sub">Hospital Bill (Page 9)</div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-caption">Financial Reconciliation</div>
+          <div style="margin-top: 0.35rem;" id="kpi-reconciliation">
+            <span class="badge badge-success">✓ Exact Match ($0.00 Variance)</span>
+          </div>
+          <div class="kpi-sub">Sum of 20 Line Items</div>
+        </div>
+      </div>
+
+      <!-- Main Results Tab Card -->
+      <div class="card results-card">
+        <div class="tabs-nav-bar">
+          <button class="tab-btn active" data-tab="tab-segregation">
+            <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+            Document Segregation
+          </button>
+          <button class="tab-btn" data-tab="tab-identity">
+            <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+            Patient Identity
+          </button>
+          <button class="tab-btn" data-tab="tab-discharge">
+            <svg viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"></path></svg>
+            Discharge Summary
+          </button>
+          <button class="tab-btn" data-tab="tab-bill">
+            <svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+            Itemized Hospital Bill
+          </button>
+          <button class="tab-btn" data-tab="tab-json">
+            <svg viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+            Structured JSON
+          </button>
+        </div>
+
+        <!-- Tab 1: Document Segregation -->
+        <div class="tab-panel active" id="tab-segregation">
+          <div class="tab-panel-header">
+            <div>
+              <h3 class="tab-title">Page-by-Page Classification Across 9 Categories</h3>
+              <div style="font-size: 0.8rem; color: var(--color-text-secondary); margin-top: 0.15rem;">
+                Click any category filter chip to isolate matching pages and their target agent routing.
+              </div>
+            </div>
+            <span class="source-tag" id="segregation-count-badge">18 Total Pages</span>
+          </div>
+
+          <!-- Dynamic Category Filter Chips -->
+          <div class="filter-chips-row" id="category-filter-chips">
+            <!-- Dynamically populated -->
+          </div>
+
+          <div class="table-responsive">
+            <table class="data-table" id="page-classifications-table">
+              <thead>
+                <tr>
+                  <th style="width: 80px;">Page #</th>
+                  <th>Assigned Category</th>
+                  <th>Confidence</th>
+                  <th>Target Agent Routing</th>
+                  <th>Classification Summary</th>
+                </tr>
+              </thead>
+              <tbody id="page-classifications-tbody">
+                <!-- Dynamically populated -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Tab 2: Patient Identity -->
+        <div class="tab-panel" id="tab-identity">
+          <div class="tab-panel-header">
+            <div>
+              <h3 class="tab-title">Patient Identity &amp; Government ID Information</h3>
+              <div style="font-size: 0.8rem; color: var(--color-text-secondary); margin-top: 0.15rem;">
+                Extracted exclusively from pages classified as <code>identity_document</code>.
+              </div>
+            </div>
+            <span class="source-tag" id="id-source-tag">Source Pages: 3</span>
+          </div>
+
+          <div class="info-field-grid" id="identity-details-grid">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+
+        <!-- Tab 3: Discharge Summary -->
+        <div class="tab-panel" id="tab-discharge">
+          <div class="tab-panel-header">
+            <div>
+              <h3 class="tab-title">Clinical Discharge Summary &amp; Hospital Course</h3>
+              <div style="font-size: 0.8rem; color: var(--color-text-secondary); margin-top: 0.15rem;">
+                Extracted exclusively from pages classified as <code>discharge_summary</code>.
+              </div>
+            </div>
+            <span class="source-tag" id="discharge-source-tag">Source Pages: 4</span>
+          </div>
+
+          <div class="diagnosis-banner" id="diagnosis-banner">
+            <div>
+              <div style="font-size: 0.72rem; font-weight: 700; text-transform: uppercase; color: var(--color-primary); letter-spacing: 0.05em;">
+                Primary Clinical Diagnosis
+              </div>
+              <div class="diag-title" id="diagnosis-text">Community Acquired Pneumonia (CAP)</div>
+            </div>
+            <span class="badge badge-success">Clinical Admission Documented</span>
+          </div>
+
+          <div class="info-field-grid" id="discharge-details-grid">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+
+        <!-- Tab 4: Itemized Bill -->
+        <div class="tab-panel" id="tab-bill">
+          <div class="tab-panel-header">
+            <div>
+              <h3 class="tab-title">Itemized Hospital Charges &amp; Decimal Math Reconciliation</h3>
+              <div style="font-size: 0.8rem; color: var(--color-text-secondary); margin-top: 0.15rem;">
+                Extracted from pages classified as <code>itemized_bill</code> and validated against stated financial totals.
+              </div>
+            </div>
+            <span class="source-tag" id="bill-source-tag">Source Pages: 9</span>
+          </div>
+
+          <div class="reconciliation-stat-banner" id="reconciliation-banner">
+            <!-- Dynamically populated -->
+          </div>
+
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th style="width: 50px;">#</th>
+                  <th>Service / Procedure Description</th>
+                  <th class="num-align" style="width: 100px;">Quantity</th>
+                  <th class="num-align" style="width: 120px;">Unit Rate</th>
+                  <th class="num-align" style="width: 140px;">Line Amount</th>
+                  <th style="width: 130px;">Service Date</th>
+                </tr>
+              </thead>
+              <tbody id="bill-items-tbody">
+                <!-- Dynamically populated -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Tab 5: Structured JSON -->
+        <div class="tab-panel" id="tab-json">
+          <div class="tab-panel-header">
+            <div>
+              <h3 class="tab-title">Pydantic Validated Pipeline Response Schema</h3>
+              <div style="font-size: 0.8rem; color: var(--color-text-secondary); margin-top: 0.15rem;">
+                Unified JSON response adhering to <code>ClaimProcessingResponse</code> schema.
+              </div>
+            </div>
+            <div style="display: flex; gap: 0.5rem;">
+              <button type="button" class="btn btn-secondary btn-sm" id="btn-copy-json">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                </svg>
+                Copy JSON
+              </button>
+              <button type="button" class="btn btn-secondary btn-sm" id="btn-download-json">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                  <polyline points="7 10 12 15 17 10"></polyline>
+                  <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+                Download .json
+              </button>
+            </div>
+          </div>
+
+          <pre class="json-viewer" id="json-raw-display"></pre>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

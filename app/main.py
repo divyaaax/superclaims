@@ -12,7 +12,8 @@ import tempfile
 from typing import Annotated
 from fastapi import FastAPI, File, Form, HTTPException, UploadFile, status
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import FileResponse, HTMLResponse, JSONResponse
+from fastapi.staticfiles import StaticFiles
 
 from app.config import get_settings
 from app.graph import process_claim_pipeline
@@ -44,6 +45,42 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Mount Static Files
+static_dir = os.path.join(os.path.dirname(__file__), "static")
+if os.path.exists(static_dir):
+    app.mount("/static", StaticFiles(directory=static_dir), name="static")
+
+
+@app.get(
+    "/",
+    response_class=FileResponse,
+    summary="Interactive Claim Processing Web Dashboard",
+    tags=["Frontend"],
+)
+async def serve_dashboard():
+    """Serves the interactive frontend web dashboard."""
+    index_file = os.path.join(static_dir, "index.html")
+    if os.path.exists(index_file):
+        return FileResponse(index_file, media_type="text/html")
+    return HTMLResponse("<h1>SuperClaims AI Dashboard</h1><p>Visit <a href='/docs'>/docs</a> for API.</p>")
+
+
+@app.get(
+    "/api/sample-pdf",
+    summary="Download sample medical claim PDF for one-click testing",
+    tags=["Claim Processing"],
+)
+async def get_sample_medical_pdf():
+    """Provide the sample medical claim PDF for one-click evaluation in the frontend."""
+    sample_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "data", "sample_medical_claim.pdf"))
+    if os.path.exists(sample_path):
+        return FileResponse(
+            sample_path,
+            media_type="application/pdf",
+            filename="sample_medical_claim.pdf",
+        )
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Sample medical PDF not found.")
 
 
 @app.get(

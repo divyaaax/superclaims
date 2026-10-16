@@ -24,7 +24,7 @@ class Settings(BaseSettings):
     openai_base_url: Optional[str] = None
     llm_model: str = "gpt-4o-mini"
     llm_temperature: float = 0.0
-    use_mock_llm: bool = False
+    use_mock_llm: bool = True
 
     # Document & Processing Constraints
     max_file_size_mb: int = 25

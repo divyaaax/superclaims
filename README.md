@@ -143,9 +143,37 @@ uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
 ```
 
 Once running:
+- **Interactive Web Dashboard**: [http://127.0.0.1:8000/](http://127.0.0.1:8000/) *(Full visual UI with drag-and-drop PDF upload, one-click sample evaluation, visual 9-category page badges, clinical & financial summary cards, and live JSON inspector)*
 - **Interactive Swagger Documentation**: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
 - **ReDoc Alternative Documentation**: [http://127.0.0.1:8000/redoc](http://127.0.0.1:8000/redoc)
 - **Health Check Endpoint**: [http://127.0.0.1:8000/health](http://127.0.0.1:8000/health)
+
+---
+
+## Cloud Deployment Guide (Render / Railway / Fly.io)
+
+This repository includes turnkey configuration files (`Dockerfile`, `render.yaml`, `Procfile`) for immediate zero-config deployment:
+
+### 1. Deploy on Render
+1. Push this repository to GitHub.
+2. Sign in to [Render](https://render.com) and click **New + > Blueprint**.
+3. Select your repository. Render will automatically detect `render.yaml` and configure the Web Service with Python 3.11 and Uvicorn.
+4. (Optional) Set `OPENAI_API_KEY` in Render's Environment Variables if using live LLM inference, or leave `USE_MOCK_LLM=true` for free offline demonstration.
+
+### 2. Deploy on Railway
+1. Sign in to [Railway](https://railway.app) and click **New Project > Deploy from GitHub repo**.
+2. Select `divyaaax/superclaims`. Railway automatically detects the `Procfile` and `requirements.txt`.
+3. Set environment variable `PORT` to `8000` (or allow Railway's assigned port).
+
+### 3. Deploy via Docker (Local or Fly.io)
+```bash
+# Build Docker image
+docker build -t superclaims .
+
+# Run Docker container
+docker run -p 8000:8000 --env USE_MOCK_LLM=true superclaims
+```
+
 
 ---
 

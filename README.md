@@ -1,6 +1,15 @@
 # Medical Claim Document Processing Pipeline
 
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Render-00C7B7?style=flat&logo=render&logoColor=white)](https://superclaims-project.onrender.com/)
+[![Interactive Swagger Docs](https://img.shields.io/badge/API%20Docs-Swagger%20UI-85EA2D?style=flat&logo=swagger&logoColor=black)](https://superclaims-project.onrender.com/docs)
+[![Tests Passing](https://img.shields.io/badge/Tests-28%20Passed-brightgreen?style=flat&logo=pytest)](https://github.com/divyaaax/superclaims)
+[![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-blue?style=flat&logo=python&logoColor=white)](https://www.python.org/)
+
 An intelligent, multi-agent medical claim processing backend built with **FastAPI**, **LangGraph**, **Pydantic v2**, and **pypdf**.
+
+- **Live Web Dashboard**: [https://superclaims-project.onrender.com/](https://superclaims-project.onrender.com/)
+- **Interactive Swagger Documentation**: [https://superclaims-project.onrender.com/docs](https://superclaims-project.onrender.com/docs)
+- **Live Health Check**: [https://superclaims-project.onrender.com/health](https://superclaims-project.onrender.com/health)
 
 This service ingests multi-page medical claim PDFs, extracts text page-by-page while preserving physical page numbering, segregates pages into **exactly 9 document categories** using an AI Segregator Agent, routes relevant pages in parallel to three specialized extraction agents (ID Agent, Discharge Summary Agent, and Itemized Bill Agent), performs monetary reconciliation with `Decimal` arithmetic, and aggregates the results into a validated JSON response.
 

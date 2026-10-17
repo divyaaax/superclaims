@@ -27,11 +27,11 @@ graph TD
 
 ---
 
-## Document Categories (Exact 9 Allowed Types)
+## Document Categories
 
-The Segregator Agent classifies every page into strictly one of these 9 categories:
+The Segregator Agent classifies each page into one of 9 discrete document categories:
 
-| Category | Description | Sample PDF Page |
+| Category | Description | Example Content / Page |
 | :--- | :--- | :--- |
 | `claim_forms` | Insurance claim reimbursement forms & initial application records | Page 1 |
 | `cheque_or_bank_details` | Bank cheques, account slips, routing & bank verification forms | Page 2 |
@@ -365,26 +365,68 @@ python -m pytest -v
 
 ---
 
-## Video Walkthrough Presentation Outline
+## Repository Structure
 
-When recording your Loom or video presentation, follow this concise script:
+```
+superclaims/
+├── app/
+│   ├── agents/
+│   │   ├── segregator.py          # Classifies pages into document categories
+│   │   ├── id_agent.py            # Extracts patient identity and demographics
+│   │   ├── discharge_agent.py     # Extracts diagnoses, admission/discharge dates, and physician notes
+│   │   └── bill_agent.py          # Extracts itemized charges and performs Decimal reconciliation
+│   ├── services/
+│   │   └── llm_service.py         # ChatOpenAI structured output wrapper and mock fallback
+│   ├── static/                    # Interactive dashboard frontend
+│   │   ├── app.js                 # Dashboard logic, drag-and-drop, and API integration
+│   │   ├── index.html             # Clean HTML5 UI
+│   │   └── style.css              # Custom responsive stylesheet (Light & Dark modes)
+│   ├── config.py                  # Pydantic Settings configuration
+│   ├── graph.py                   # LangGraph StateGraph orchestration workflow
+│   ├── main.py                    # FastAPI application and REST endpoints
+│   ├── pdf_processor.py           # Per-page text extraction and validation
+│   ├── schemas.py                 # Pydantic data models and schemas
+│   └── state.py                   # TypedDict graph state definition
+├── data/
+│   ├── example_response.json      # Complete sample JSON response
+│   └── sample_medical_claim.pdf   # 18-page sample claim package
+├── tests/
+│   ├── conftest.py                # Pytest fixtures and mock services
+│   ├── test_agents.py             # Agent segregation and extraction tests
+│   ├── test_api.py                # HTTP endpoint and validation tests
+│   ├── test_graph.py              # LangGraph pipeline execution tests
+│   ├── test_health.py             # Health check endpoint tests
+│   ├── test_integration_sample.py # End-to-end integration test on 18-page sample
+│   ├── test_pdf_processor.py      # PDF parsing and corrupted stream tests
+│   └── test_schemas.py            # Schema validation and Decimal precision tests
+├── Dockerfile                     # Container image definition
+├── Procfile                       # Process file for Heroku/Railway
+├── render.yaml                    # Infrastructure-as-code for Render deployment
+├── requirements.txt               # Production and test dependencies
+└── README.md                      # Project documentation
+```
 
-1. **Introduction & Objective (0:00 - 0:30)**:
-   - Introduce the project: An automated document processing pipeline for insurance claims built on FastAPI and LangGraph.
-2. **LangGraph Workflow Architecture (0:30 - 1:15)**:
-   - Walk through the state graph: `START -> Segregator Agent -> Parallel Extractions (ID, Discharge, Bill) -> Aggregator -> END`.
-   - Explain how LangGraph fans out to extraction agents in parallel and fans in to the Aggregator node with non-conflicting state reducers.
-3. **Segregator Agent Demonstration (1:15 - 2:00)**:
-   - Show how the PDF is parsed into page blocks, preserving 1-indexed page numbers.
-   - Show how pages are classified strictly into the 9 categories.
-   - Highlight the optimization where blank/low-text pages bypass the LLM and are directly classified as `other`.
-4. **Extraction Agents & Arithmetic Validation (2:00 - 3:00)**:
-   - Show the ID Agent extracting identity fields without inventing missing values.
-   - Show the Discharge Summary Agent extracting clinical diagnoses and dates.
-   - Show the Itemized Bill Agent extracting line items and using `Decimal` arithmetic to verify financial totals, flagging discrepancies without overwriting stated values.
-5. **Live API Execution & Tests (3:00 - 4:00)**:
-   - Demonstrate the Swagger UI at `http://127.0.0.1:8000/docs`.
-   - Run `pytest` in the terminal to demonstrate all 28 automated tests passing cleanly.
+---
+
+## Technical Highlights & Design Decisions
+
+### 1. Decoupled Multi-Agent Graph (LangGraph)
+Rather than passing an entire 18+ page claim document to a single monolithic prompt—which would suffer from context degradation, high hallucination rates, and massive token costs—the pipeline uses a directed acyclic state graph:
+- **Segregator Node**: First classifies each physical page independently into one of 9 discrete document types.
+- **Conditional Routing**: Extraction agents (ID, Discharge, Bill) run concurrently and receive *strictly* the pages belonging to their domain.
+- **Aggregator Node**: Collects results from all branches, computes end-to-end latency, and validates the unified Pydantic response model.
+
+### 2. High-Precision Financial Reconciliation
+Medical bills often contain dozens of line items, rounding idiosyncrasies, and tax computations.
+- The pipeline utilizes Python's native **`Decimal`** module with `ROUND_HALF_UP` quantization to prevent floating-point inaccuracies common with IEEE 754 floats.
+- Stated totals on the document are **never silently modified or overwritten**. If the calculated sum of line items disagrees with the stated total, a `discrepancy_detected` flag is set to `true` along with line-by-line audit details.
+
+### 3. Token-Efficient Fast-Paths
+- Pages with negligible or zero text (e.g., blank separator pages, unreadable noise) automatically bypass the LLM and are categorized as `other`, preserving LLM quotas and minimizing latency.
+- LLM calls for page segregation are batched (configurable via `BATCH_SIZE`), allowing large multi-page PDFs to be processed with minimal round-trip network overhead.
+
+### 4. Zero-Dependency Offline Evaluation Mode
+- For continuous integration and local development without incurring API costs or requiring external keys, setting `USE_MOCK_LLM=true` enables a deterministic fallback engine that executes all pipeline graph stages locally.
 
 ---
 

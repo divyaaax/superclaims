@@ -98,7 +98,6 @@ class MockLLMService(LLMService):
         user_content = messages[-1].content
 
         if schema == BatchClassificationResponse:
-            # Generate deterministic classifications based on page text hints
             classifications = []
             for line in user_content.split("--- START PAGE "):
                 if not line.strip():

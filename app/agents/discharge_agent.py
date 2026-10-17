@@ -1,14 +1,4 @@
-"""Discharge Summary Agent Module
-
-Extracts clinical discharge details from pages classified as discharge_summary.
-Extracts:
-- Diagnosis (primary, admission, or discharge diagnosis)
-- Admission date
-- Discharge date
-- Physician details (attending physician name, designation, department)
-- Hospital name and discharge condition when available.
-Preserves original information and handles missing values cleanly.
-"""
+"""Discharge Summary Agent for clinical documentation extraction."""
 
 import logging
 from typing import List, Optional
@@ -40,20 +30,13 @@ CRITICAL RULES:
 
 
 class DischargeSummaryAgent:
-    """Agent that processes ONLY pages classified as discharge_summary."""
+    """Agent for extracting details from discharge summaries."""
 
     def __init__(self, llm_service: Optional[LLMService] = None):
         self.llm_service = llm_service or get_llm_service()
 
     def extract(self, relevant_pages: List[PageContent]) -> DischargeSummaryData:
-        """Extract discharge summary details from relevant pages.
-
-        Args:
-            relevant_pages: Pages categorized strictly as discharge_summary.
-
-        Returns:
-            DischargeSummaryData containing extracted fields or clean null defaults if no pages.
-        """
+        """Extract discharge summary details from relevant pages."""
         source_page_nums = [p.page_number for p in relevant_pages]
 
         if not relevant_pages:

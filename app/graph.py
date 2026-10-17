@@ -1,10 +1,4 @@
-"""LangGraph Workflow Orchestrator for Claim Processing Pipeline.
-
-Builds the exact required graph flow:
-START -> [Segregator Agent] -> [ID Agent]                -> [Aggregator] -> END
-                            -> [Discharge Summary Agent] ↗
-                            -> [Itemized Bill Agent]     ↗
-"""
+"""LangGraph workflow for claim document segregation and extraction."""
 
 import logging
 import time
@@ -28,9 +22,8 @@ from app.state import ClaimState
 logger = logging.getLogger(__name__)
 
 
-# Agent nodes
 def segregator_node(state: ClaimState) -> Dict[str, Any]:
-    """Node 1: Segregator Agent classifies pages into 9 document categories."""
+    """Classify pages into document categories."""
     logger.info("Executing Segregator Node for claim_id=%s", state.get("claim_id"))
     llm_svc = get_llm_service()
     segregator = SegregatorAgent(llm_service=llm_svc)
@@ -53,7 +46,7 @@ def segregator_node(state: ClaimState) -> Dict[str, Any]:
 
 
 def id_agent_node(state: ClaimState) -> Dict[str, Any]:
-    """Node 2A: ID Agent extracts patient identity from identity_document pages."""
+    """Extract patient identity from ID pages."""
     logger.info("Executing ID Agent Node for claim_id=%s", state.get("claim_id"))
     llm_svc = get_llm_service()
     id_agent = IDAgent(llm_service=llm_svc)
@@ -76,7 +69,7 @@ def id_agent_node(state: ClaimState) -> Dict[str, Any]:
 
 
 def discharge_agent_node(state: ClaimState) -> Dict[str, Any]:
-    """Node 2B: Discharge Summary Agent extracts clinical data from discharge_summary pages."""
+    """Extract clinical details from discharge summary pages."""
     logger.info("Executing Discharge Summary Agent Node for claim_id=%s", state.get("claim_id"))
     llm_svc = get_llm_service()
     discharge_agent = DischargeSummaryAgent(llm_service=llm_svc)
@@ -99,7 +92,7 @@ def discharge_agent_node(state: ClaimState) -> Dict[str, Any]:
 
 
 def bill_agent_node(state: ClaimState) -> Dict[str, Any]:
-    """Node 2C: Itemized Bill Agent extracts billing details and reconciles arithmetic."""
+    """Extract billing items and reconcile arithmetic."""
     logger.info("Executing Itemized Bill Agent Node for claim_id=%s", state.get("claim_id"))
     llm_svc = get_llm_service()
     bill_agent = ItemizedBillAgent(llm_service=llm_svc)
@@ -122,7 +115,7 @@ def bill_agent_node(state: ClaimState) -> Dict[str, Any]:
 
 
 def aggregator_node(state: ClaimState) -> Dict[str, Any]:
-    """Node 3: Aggregator combines the outputs of all agents into a final JSON response."""
+    """Combine agent outputs into a unified response."""
     claim_id = state.get("claim_id", "UNKNOWN")
     logger.info("Executing Aggregator Node for claim_id=%s", claim_id)
 
@@ -145,11 +138,9 @@ def aggregator_node(state: ClaimState) -> Dict[str, Any]:
         itemized_bill=bill_data,
     )
 
-    # Compute latency
     start_time = state.get("start_time")
     latency = round(time.time() - start_time, 3) if start_time else None
 
-    # Status determination
     if errors:
         status = "PARTIAL_SUCCESS" if (id_data or discharge_data or bill_data) else "ERROR"
     else:
@@ -171,14 +162,12 @@ def build_claim_graph() -> StateGraph:
     """Build and compile the LangGraph workflow."""
     workflow = StateGraph(ClaimState)
 
-    # Add Nodes
     workflow.add_node("segregator", segregator_node)
     workflow.add_node("id_agent", id_agent_node)
     workflow.add_node("discharge_agent", discharge_agent_node)
     workflow.add_node("bill_agent", bill_agent_node)
     workflow.add_node("aggregator", aggregator_node)
 
-    # Wire Edges: START -> segregator -> [id_agent, discharge_agent, bill_agent] -> aggregator -> END
     workflow.add_edge(START, "segregator")
     workflow.add_edge("segregator", "id_agent")
     workflow.add_edge("segregator", "discharge_agent")
@@ -191,12 +180,11 @@ def build_claim_graph() -> StateGraph:
     return workflow.compile()
 
 
-# Compiled singleton graph
 claim_graph = build_claim_graph()
 
 
 def process_claim_pipeline(claim_id: str, pages: List[PageContent]) -> ClaimProcessingResponse:
-    """Convenience helper to invoke the claim processing pipeline."""
+    """Execute claim processing pipeline on extracted pages."""
     initial_state: ClaimState = {
         "claim_id": claim_id,
         "pages": pages,

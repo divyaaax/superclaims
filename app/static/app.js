@@ -38,9 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let latestResultData = null;
   let activeCategoryFilter = 'all';
 
-  // =================================================================
-  // 1. Initial Health Check
-  // =================================================================
+  // Health check
   async function checkHealth() {
     try {
       const res = await fetch('/health');
@@ -57,9 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   checkHealth();
 
-  // =================================================================
-  // 2. Button State & Validation
-  // =================================================================
+  // Button state validation
   function updateButtonState() {
     const hasClaimId = Boolean(claimIdInput.value.trim());
     const hasFile = Boolean(selectedFile);
@@ -68,9 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   claimIdInput.addEventListener('input', updateButtonState);
 
-  // =================================================================
-  // 3. Tab Switching Logic
-  // =================================================================
+  // Tab switching
   const tabBtns = document.querySelectorAll('.tab-btn');
   const tabPanels = document.querySelectorAll('.tab-panel');
 
@@ -85,18 +79,14 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // =================================================================
-  // 4. Claim ID Auto-Generation
-  // =================================================================
+  // Claim ID generator
   btnRandomId.addEventListener('click', () => {
     const randomNum = Math.floor(100000 + Math.random() * 900000);
     claimIdInput.value = `CLM-2025-${randomNum}`;
     updateButtonState();
   });
 
-  // =================================================================
-  // 5. Drag & Drop PDF Handling
-  // =================================================================
+  // Drag and drop PDF handling
   dropzone.addEventListener('click', (e) => {
     if (e.target !== btnRemoveFile && !btnRemoveFile.contains(e.target)) {
       fileInput.click();
@@ -165,9 +155,7 @@ document.addEventListener('DOMContentLoaded', () => {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
   }
 
-  // =================================================================
-  // 6. One-Click Sample PDF Loader
-  // =================================================================
+  // Sample PDF loader
   btnLoadSample.addEventListener('click', async () => {
     btnLoadSample.disabled = true;
     btnLoadSample.textContent = 'Loading sample...';
@@ -191,9 +179,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // =================================================================
-  // 7. Form Submission & Processing Execution
-  // =================================================================
+  // Form submission
   claimForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     hideError();
@@ -302,14 +288,11 @@ document.addEventListener('DOMContentLoaded', () => {
     errorAlert.classList.add('hidden');
   }
 
-  // =================================================================
-  // 8. Render Results Dashboard
-  // =================================================================
+  // Render results
   function renderResults(data) {
     resultsSection.classList.remove('hidden');
     resultsSection.scrollIntoView({ behavior: 'smooth' });
 
-    // 1. KPI Cards
     document.getElementById('kpi-claim-id').textContent = data.claim_id;
     document.getElementById('kpi-pages').textContent = data.segregation_results.total_pages;
     document.getElementById('kpi-latency').textContent = data.processing_time_seconds 
@@ -330,13 +313,11 @@ document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('kpi-reconciliation').innerHTML = `<span class="badge badge-neutral">No Bill</span>`;
     }
 
-    // 2. Render Tabs
     renderSegregation(data.segregation_results);
     renderIdentity(data.extracted_data.identity_information);
     renderDischarge(data.extracted_data.discharge_summary);
     renderBill(data.extracted_data.itemized_bill);
 
-    // 3. Render JSON
     document.getElementById('json-raw-display').textContent = JSON.stringify(data, null, 2);
 
     // Switch to first tab (Segregation)
@@ -346,9 +327,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('tab-segregation')?.classList.add('active');
   }
 
-  // =================================================================
-  // 9. Document Segregation & Filter Chips
-  // =================================================================
+  // Document segregation tab
   function renderSegregation(segregation) {
     document.getElementById('segregation-count-badge').textContent = `${segregation.total_pages} Total Pages`;
     activeCategoryFilter = 'all';
@@ -435,9 +414,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // =================================================================
-  // 10. Patient Identity Details Tab
-  // =================================================================
+  // Patient identity tab
   function renderIdentity(idData) {
     const grid = document.getElementById('identity-details-grid');
     grid.innerHTML = '';
@@ -473,9 +450,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // =================================================================
-  // 11. Discharge Summary Details Tab
-  // =================================================================
+  // Discharge summary tab
   function renderDischarge(dischargeData) {
     const grid = document.getElementById('discharge-details-grid');
     grid.innerHTML = '';
@@ -520,9 +495,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // =================================================================
-  // 12. Itemized Hospital Bill Tab & Decimal Math
-  // =================================================================
+  // Itemized hospital bill tab
   function renderBill(billData) {
     const sourceTag = document.getElementById('bill-source-tag');
     sourceTag.textContent = billData && billData.source_pages && billData.source_pages.length > 0 
@@ -586,9 +559,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // =================================================================
-  // 13. Copy & Download JSON Actions
-  // =================================================================
+  // Export actions
   btnCopyJson.addEventListener('click', () => {
     if (latestResultData) {
       navigator.clipboard.writeText(JSON.stringify(latestResultData, null, 2)).then(() => {
@@ -619,9 +590,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // =================================================================
-  // 14. Light / Dark Theme Management
-  // =================================================================
+  // Theme management
   function initTheme() {
     const themeToggleBtn = document.getElementById('theme-toggle-btn');
     const themeToggleLabel = document.getElementById('theme-toggle-label');

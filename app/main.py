@@ -113,11 +113,7 @@ async def process_claim(
     claim_id: Annotated[str, Form(description="Unique claim identifier")],
     file: Annotated[UploadFile, File(description="Uploaded medical claim PDF file")],
 ):
-    """Ingest a PDF claim file, segregate pages into 9 document types, and extract data
-
-    via ID Agent, Discharge Summary Agent, and Itemized Bill Agent orchestrated by LangGraph.
-    """
-    # 1. Validate claim_id
+    """Process an uploaded medical claim PDF and return extracted structured data."""
     cleaned_claim_id = (claim_id or "").strip()
     if not cleaned_claim_id:
         raise HTTPException(
@@ -125,7 +121,6 @@ async def process_claim(
             detail="The 'claim_id' field is required and cannot be empty.",
         )
 
-    # 2. Validate file type
     filename = file.filename or ""
     is_pdf_content_type = file.content_type in ["application/pdf", "application/x-pdf", "application/octet-stream"]
     is_pdf_extension = filename.lower().endswith(".pdf")
@@ -136,16 +131,14 @@ async def process_claim(
             detail=f"Invalid file format: '{filename}'. Only PDF documents are accepted.",
         )
 
-    # 3. Read file safely with file-size limit enforcement
     max_bytes = settings.max_file_size_bytes
     temp_file_path = None
 
     try:
-        # Create temporary file to handle streaming and cleanup reliably
         with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmp:
             temp_file_path = tmp.name
             size_read = 0
-            chunk_size = 1024 * 64  # 64 KB chunks
+            chunk_size = 1024 * 64
 
             while chunk := await file.read(chunk_size):
                 size_read += len(chunk)
@@ -165,7 +158,6 @@ async def process_claim(
                 detail="Uploaded file is empty (0 bytes).",
             )
 
-        # 4. Extract pages and validate PDF integrity
         try:
             pages = PDFProcessor.extract_pages_from_file(temp_file_path)
         except PDFProcessingError as pe:
@@ -175,7 +167,6 @@ async def process_claim(
                 detail=f"Failed to process PDF: {str(pe)}",
             )
 
-        # 5. Check LLM configuration before starting workflow
         llm_svc = get_llm_service()
         if not llm_svc.is_configured():
             logger.error("Attempted processing without configured LLM credentials.")
@@ -187,11 +178,9 @@ async def process_claim(
                 ),
             )
 
-        # 6. Execute LangGraph workflow
         logger.info("Starting claim pipeline for claim_id=%s with %d pages", cleaned_claim_id, len(pages))
         response = process_claim_pipeline(claim_id=cleaned_claim_id, pages=pages)
 
-        # 7. Check if processing suffered fatal failure
         if response.status == "ERROR" and not (
             response.extracted_data.identity_information
             or response.extracted_data.discharge_summary
@@ -219,7 +208,6 @@ async def process_claim(
             detail=f"Internal processing error: {str(e)}",
         )
     finally:
-        # Cleanup temporary uploaded file safely
         if temp_file_path and os.path.exists(temp_file_path):
             try:
                 os.remove(temp_file_path)

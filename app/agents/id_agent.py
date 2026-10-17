@@ -1,14 +1,4 @@
-"""ID Agent Module
-
-Extracts patient identity information from pages classified as identity_document.
-Extracts:
-- Patient name
-- Date of birth
-- Identification numbers (ID number, ID type)
-- Policy details (if present on the ID card)
-- Additional stated demographics (gender, address)
-Preserves missing fields as None/null without inventing information.
-"""
+"""ID Agent for extracting patient identity information."""
 
 import logging
 from typing import List, Optional
@@ -39,20 +29,13 @@ CRITICAL RULES:
 
 
 class IDAgent:
-    """Agent that processes ONLY pages classified as identity_document."""
+    """Agent for extracting patient details from identity documents."""
 
     def __init__(self, llm_service: Optional[LLMService] = None):
         self.llm_service = llm_service or get_llm_service()
 
     def extract(self, relevant_pages: List[PageContent]) -> IdentityData:
-        """Extract identity details from relevant pages.
-
-        Args:
-            relevant_pages: Pages categorized strictly as identity_document.
-
-        Returns:
-            IdentityData containing extracted fields or clean null defaults if no pages.
-        """
+        """Extract identity details from relevant pages."""
         source_page_nums = [p.page_number for p in relevant_pages]
 
         if not relevant_pages:
@@ -93,7 +76,6 @@ class IDAgent:
 
         except Exception as e:
             logger.error("ID Agent failed extraction: %s", str(e))
-            # Safe non-fabricated fallback
             return IdentityData(
                 patient_name=None,
                 date_of_birth=None,

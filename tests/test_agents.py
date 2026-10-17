@@ -52,7 +52,7 @@ def test_id_agent_normal_extraction(mock_llm_service, mock_pages):
     assert data.patient_name == "JOHN MICHAEL SMITH"
     assert data.date_of_birth == "15-MAR-1985"
     assert data.id_numbers["id_number"] == "ID-987-654-321"
-    assert data.policy_details is None  # Missing field is preserved as None
+    assert data.policy_details is None
     assert data.source_pages == [3]
 
 
@@ -115,7 +115,6 @@ def test_itemized_bill_reconciliation_exact_match(mock_llm_service):
 def test_itemized_bill_discrepancy_detection(mock_llm_service):
     """Test Itemized Bill Agent flags discrepancies without replacing stated total."""
     agent = ItemizedBillAgent(llm_service=mock_llm_service)
-    # Stated total is $1500.00, but line items only sum to $1150 + $57.50 = $1207.50
     bill_data = ItemizedBillData(
         bill_number="BILL-DISCREPANT",
         bill_items=[
@@ -124,11 +123,11 @@ def test_itemized_bill_discrepancy_detection(mock_llm_service):
         ],
         stated_subtotal=Decimal("1150.00"),
         stated_tax=Decimal("57.50"),
-        stated_total=Decimal("1500.00"),  # Deliberate disagreement
+        stated_total=Decimal("1500.00"),
     )
     reconciled = agent._reconcile_finances(bill_data, source_pages=[9])
 
-    assert reconciled.stated_total == Decimal("1500.00")  # Never silently replaced!
+    assert reconciled.stated_total == Decimal("1500.00")
     assert reconciled.calculated_total == Decimal("1207.50")
     assert reconciled.discrepancy_detected is True
     assert "Calculation discrepancy" in reconciled.discrepancy_details

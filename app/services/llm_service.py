@@ -78,7 +78,6 @@ class LLMService:
             LLMConfigurationError: If the API key is missing.
             Exception: If invocation or schema validation fails.
         """
-        # If explicitly running in offline mock demonstration mode
         if self.settings.use_mock_llm:
             return self._mock_resolve(messages, schema)
 
@@ -89,7 +88,6 @@ class LLMService:
             logger.debug("Invoking LLM structured output for schema %s", schema.__name__)
             result = structured_llm.invoke(messages)
             if not isinstance(result, schema):
-                # When structured_output returns dict or raw response
                 result = schema.model_validate(result)
             return result
         except LLMConfigurationError:

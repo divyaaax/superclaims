@@ -17,17 +17,14 @@ def test_full_graph_execution(mock_llm_service, mock_pages):
     assert response.status == "SUCCESS"
     assert response.segregation_results.total_pages == 4
 
-    # Verify ID Agent extraction
     assert response.extracted_data.identity_information is not None
     assert response.extracted_data.identity_information.patient_name == "JOHN MICHAEL SMITH"
     assert response.extracted_data.identity_information.source_pages == [3]
 
-    # Verify Discharge Summary Agent extraction
     assert response.extracted_data.discharge_summary is not None
     assert "Pneumonia" in response.extracted_data.discharge_summary.diagnosis
     assert response.extracted_data.discharge_summary.source_pages == [4]
 
-    # Verify Itemized Bill Agent extraction
     assert response.extracted_data.itemized_bill is not None
     assert len(response.extracted_data.itemized_bill.bill_items) > 0
     assert response.extracted_data.itemized_bill.source_pages == [9]
@@ -35,7 +32,6 @@ def test_full_graph_execution(mock_llm_service, mock_pages):
 
 def test_graph_with_missing_document_categories(mock_llm_service):
     """Test LangGraph when some categories (e.g. itemized bill, discharge summary) are missing."""
-    # Only supply an ID card page
     id_only_pages = [
         PageContent(
             page_number=1,
@@ -54,6 +50,5 @@ def test_graph_with_missing_document_categories(mock_llm_service):
     assert response.claim_id == "CLM-ONLY-ID"
     assert response.status == "SUCCESS"
     assert response.extracted_data.identity_information.patient_name == "JOHN MICHAEL SMITH"
-    # Discharge and Bill agents should gracefully return extracted=False without crashing
     assert response.extracted_data.discharge_summary.extracted is False
     assert response.extracted_data.itemized_bill.extracted is False

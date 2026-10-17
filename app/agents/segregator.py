@@ -1,17 +1,4 @@
-"""Segregator Agent Module
-
-Analyzes PDF page contents and classifies each page into exactly one of
-the 9 required document categories:
-- claim_forms
-- cheque_or_bank_details
-- identity_document
-- itemized_bill
-- discharge_summary
-- prescription
-- investigation_report
-- cash_receipt
-- other
-"""
+"""Segregator agent for classifying claim document pages."""
 
 import logging
 from typing import Dict, List, Optional
@@ -47,21 +34,14 @@ RULES:
 
 
 class SegregatorAgent:
-    """Agent responsible for classifying pages of a claim PDF into 9 distinct categories."""
+    """Agent for classifying document pages into standard categories."""
 
     def __init__(self, llm_service: Optional[LLMService] = None):
         self.llm_service = llm_service or get_llm_service()
         self.settings = get_settings()
 
     def classify_pages(self, pages: List[PageContent]) -> SegregationSummary:
-        """Classify all pages in the PDF document.
-
-        Args:
-            pages: List of PageContent extracted from PDF.
-
-        Returns:
-            SegregationSummary containing page-by-page classification and category mapping.
-        """
+        """Classify all pages in the PDF document."""
         if not pages:
             logger.warning("No pages provided for segregation.")
             return SegregationSummary(total_pages=0, categories={}, page_classifications=[])
@@ -69,7 +49,6 @@ class SegregatorAgent:
         all_classifications: List[PageClassification] = []
         batch_size = max(1, self.settings.batch_size)
 
-        # Separate pages into empty/low-text vs text-containing pages
         pages_to_classify: List[PageContent] = []
         for page in pages:
             if not page.has_extractable_text or page.is_blank:
@@ -85,16 +64,13 @@ class SegregatorAgent:
             else:
                 pages_to_classify.append(page)
 
-        # Process text-containing pages in batches to support large PDFs reliably
         for i in range(0, len(pages_to_classify), batch_size):
             batch = pages_to_classify[i : i + batch_size]
             batch_classifications = self._classify_batch(batch)
             all_classifications.extend(batch_classifications)
 
-        # Sort classifications by page number to preserve original page order
         all_classifications.sort(key=lambda c: c.page_number)
 
-        # Build category -> page numbers mapping
         categories_map: Dict[str, List[int]] = {doc_type.value: [] for doc_type in DocumentType}
         for item in all_classifications:
             doc_type_val = (
@@ -124,7 +100,6 @@ class SegregatorAgent:
         """Classify a batch of pages using the LLM with structured output."""
         pages_text_blocks = []
         for p in batch:
-            # Truncate exceedingly long text if needed to prevent token limits
             sample_text = p.text[:3000]
             pages_text_blocks.append(
                 f"--- START PAGE {p.page_number} ---\n{sample_text}\n--- END PAGE {p.page_number} ---"
@@ -146,7 +121,6 @@ class SegregatorAgent:
                 schema=BatchClassificationResponse,
             )
 
-            # Ensure every page in this batch has a corresponding classification
             classified_map = {c.page_number: c for c in response.classifications}
             results: List[PageClassification] = []
 
@@ -167,7 +141,6 @@ class SegregatorAgent:
 
         except Exception as e:
             logger.error("Error classifying batch of pages %s: %s", [p.page_number for p in batch], str(e))
-            # Safe fallback for the batch without crashing the entire pipeline
             return [
                 PageClassification(
                     page_number=p.page_number,

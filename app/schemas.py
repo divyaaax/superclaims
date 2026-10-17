@@ -15,7 +15,7 @@ from pydantic import BaseModel, Field, ConfigDict
 
 
 class DocumentType(str, Enum):
-    """The exact 9 document types required by the assignment specification."""
+    """Document classification types."""
     CLAIM_FORMS = "claim_forms"
     CHEQUE_OR_BANK_DETAILS = "cheque_or_bank_details"
     IDENTITY_DOCUMENT = "identity_document"
@@ -38,7 +38,7 @@ class PageClassification(BaseModel):
 
 
 class BatchClassificationResponse(BaseModel):
-    """Pydantic model for LLM structured output classification."""
+    """Batch classification response."""
     classifications: List[PageClassification] = Field(
         ...,
         description="List of classifications for the supplied pages"

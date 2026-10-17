@@ -1,13 +1,4 @@
-"""Itemized Bill Agent Module
-
-Extracts itemized billing charges and validates monetary calculations
-using Decimal arithmetic.
-Extracts:
-- Individual bill items (description, quantity, unit price, line amount, date)
-- Stated subtotal, stated tax, and stated total
-- Computes calculated subtotal and calculated total
-- Flags mathematical discrepancies without silently overwriting stated amounts.
-"""
+"""Itemized Bill Agent for extracting charges and validating monetary calculations."""
 
 from decimal import Decimal, ROUND_HALF_UP
 import logging
@@ -47,20 +38,13 @@ TWO_PLACES = Decimal("0.01")
 
 
 class ItemizedBillAgent:
-    """Agent that processes ONLY pages classified as itemized_bill."""
+    """Agent for extracting itemized charges and reconciling totals."""
 
     def __init__(self, llm_service: Optional[LLMService] = None):
         self.llm_service = llm_service or get_llm_service()
 
     def extract(self, relevant_pages: List[PageContent]) -> ItemizedBillData:
-        """Extract billing items and perform decimal arithmetic verification.
-
-        Args:
-            relevant_pages: Pages categorized strictly as itemized_bill.
-
-        Returns:
-            ItemizedBillData with validated items, subtotals, totals, and discrepancy analysis.
-        """
+        """Extract billing items and perform decimal arithmetic verification."""
         source_page_nums = [p.page_number for p in relevant_pages]
 
         if not relevant_pages:
@@ -99,7 +83,6 @@ class ItemizedBillAgent:
                 schema=ItemizedBillData,
             )
 
-            # Perform deterministic Decimal reconciliation
             reconciled_data = self._reconcile_finances(raw_data, source_page_nums)
             logger.info(
                 "Bill Agent: Extracted %d line items. Discrepancy detected: %s",
@@ -130,7 +113,6 @@ class ItemizedBillAgent:
         """Calculate line-item sums using Decimal arithmetic and check for discrepancies."""
         items = data.bill_items or []
         
-        # Calculate sum of items
         if items:
             calc_subtotal = sum(
                 (Decimal(str(item.amount)) for item in items),

@@ -67,7 +67,7 @@ def test_api_process_unconfigured_llm(client: TestClient, sample_pdf_bytes):
 
 def test_api_process_file_too_large(client: TestClient, sample_pdf_bytes):
     """Test rejection with 413 when file exceeds MAX_FILE_SIZE_MB limit."""
-    with patch("app.main.settings.max_file_size_mb", 0):  # Set limit to 0 MB (0 bytes)
+    with patch("app.main.settings.max_file_size_mb", 0):
         files = {"file": ("large_claim.pdf", sample_pdf_bytes, "application/pdf")}
         data = {"claim_id": "CLM-TOO-LARGE"}
 

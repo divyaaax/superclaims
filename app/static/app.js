@@ -274,6 +274,9 @@ document.addEventListener('DOMContentLoaded', () => {
       if (el) {
         if (i <= num) el.classList.add('active');
         else el.classList.remove('active');
+        if (i === num) {
+          el.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+        }
       }
     }
   }
